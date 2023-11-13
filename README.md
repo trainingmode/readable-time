@@ -1,5 +1,11 @@
 # **_Readable Time_**
 
+- [`Timeago Clock`](#timeago-clock)
+- [`Parameters`](#parameters)
+- [`Examples`](#examples)
+
+-----
+
 Converts a date to a readable time string.
 
 ``` javascript
@@ -151,5 +157,11 @@ const timeago = `${day} ${time}`;
 console.log(timeago);
 // Today 11:15 PM
 ```
+
+-----
+
+### Author
+
+##### [_Alfred R. Duarte_](https://github.com/trainingmode)
 
 -----
