@@ -1,8 +1,8 @@
 # **_Readable Time_**
 
-- [`Timeago Clock`](#timeago-clock)
-- [`Parameters`](#parameters)
-- [`Examples`](#examples)
+- [**Timeago Clock**](#timeago-clock)
+- [**Parameters**](#parameters)
+- [**Examples**](#examples)
 
 -----
 
