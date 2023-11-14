@@ -211,16 +211,16 @@ const readableTimesLUT = {
       // Within the Last Day
       if (includeToday && hoursDelta < 24 && !isPastMidnight)
         return readableTimeLabels[locale].today;
-      // Within 24 Hours, Past Midnight
       if (
+        // Within 24 Hours, Past Midnight
         (hoursDelta < 24 && isPastMidnight) ||
         // Within the Last 2 Days
         (24 <= hoursDelta && hoursDelta < 48 && isWithinYesterday)
       )
         return readableTimeLabels[locale].yesterday;
     }
-    // Beyond 2 Full Days
-    if (48 <= hoursDelta && !isWithinYesterday) {
+    // Beyond the Last Day
+    if (!isWithinYesterday) {
       if (isWithinWeek && convertToWords)
         return readableTimeLabels[locale].days[date.getDay()];
       return date.toLocaleDateString(locale, {
