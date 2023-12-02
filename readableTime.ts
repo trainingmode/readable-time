@@ -1,8 +1,8 @@
 /**
  * READABLE TIME
- * 
+ *
  * Converts a date to a localized readable time string.
- * 
+ *
  * LICENSE MIT
  */
 
@@ -51,6 +51,20 @@ const readableTimeLabels: any = {
       4: "Thursday",
       5: "Friday",
       6: "Saturday"
+    },
+    months: {
+      0: "January",
+      1: "February",
+      2: "March",
+      3: "April",
+      4: "May",
+      5: "June",
+      6: "July",
+      7: "August",
+      8: "September",
+      9: "October",
+      10: "November",
+      11: "December"
     }
   }
 };
@@ -170,7 +184,10 @@ const readableTimesLUT = {
       includeAgoSuffix,
       includeToday = false,
       includeJustNow = true,
-      longTimeAgoThresholdDays
+      longTimeAgoThresholdDays,
+      abbreviateDays = 0,
+      abbreviateMonths = 0, 
+      abbreviatePeriod = ".",
     } = options;
 
     const date = new Date(time);
@@ -217,12 +234,16 @@ const readableTimesLUT = {
         // Within the Last 2 Days
         (24 <= hoursDelta && hoursDelta < 48 && isWithinYesterday)
       )
-        return readableTimeLabels[locale].yesterday;
+      return readableTimeLabels[locale].yesterday;
     }
     // Beyond the Last Day
     if (!isWithinYesterday) {
+      const endIndex = 0 < abbreviateDays ? abbreviateDays : 0;
+      const endChar = 0 < abbreviateDays ? abbreviatePeriod : "";
       if (isWithinWeek && convertToWords)
-        return readableTimeLabels[locale].days[date.getDay()];
+        return readableTimeLabels[locale]
+          .days[date.getDay()]
+          .substring(0, endIndex) + endChar;
       return date.toLocaleDateString(locale, {
         month: "numeric",
         day: "numeric",
@@ -309,6 +330,9 @@ const readableTimesLUT = {
  *  - includeToday: Whether to include 'Today' for times within the past day for the timeago clock. Defaults to false.
  *  - includeJustNow: Whether to include 'Just now' for times within a minute for the timeago clock. Defaults to true.
  *  - longTimeAgoThresholdDays: The threshold in days to use for the timeago clock. If the time is beyond this threshold, the timeago clock will display 'A long time ago'. Defaults to -1.
+ *  - abbreviateDays: The number of characters to abbreviate the days of the week to. Defaults to `0` (no abbreviation).
+ *  - abbreviateMonths: The number of characters to abbreviate the months of the year to. Defaults to `0` (no abbreviation).
+ *  - abbreviatePeriod: The character to use for abbreviating days & months. Defaults to `.`.
  * @returns A string representing the date in the specified format.
  */
 const toReadableTime = ({

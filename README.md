@@ -4,11 +4,11 @@
 - [**Parameters**](#parameters)
 - [**Examples**](#examples)
 
------
+---
 
 Converts a date to a readable time string.
 
-``` javascript
+```javascript
 const timeago = toReadableTime({
   time
 });
@@ -32,9 +32,10 @@ Support for multiple formats:
   - _Verbose Extended_ with only words for times less than 5, eg. `A few minutes ago`
 
 Localization is supported with the following locales:
+
 - `en-US` (_default_)
 
------
+---
 
 # Timeago Clock
 
@@ -81,7 +82,7 @@ The `verbose extended` with only words for times less than 5 format displays:
 - `A few years ago` when within 5 years
 - `X years ago` when beyond 5 years
 
------
+---
 
 # Parameters
 
@@ -131,13 +132,25 @@ Whether to include `Just now` for times within the past minute for the timeago c
 
 The threshold in days to use for the timeago clock. If the time is beyond this threshold, the timeago clock will display `A long time ago`. Defaults to `-1`.
 
------
+#### `abbreviateDays`
+
+The number of characters to abbreviate the days of the week to. Defaults to `0` (no abbreviation).
+
+#### `abbreviateMonths`
+
+The number of characters to abbreviate the months to. Defaults to `0` (no abbreviation).
+
+#### `abbreviatePeriod`
+
+The character to use for abbreviating days & months. Defaults to `.`.
+
+---
 
 # Examples
 
 ## iMessage Style Timestamps
 
-``` javascript
+```javascript
 const createdAt = Date.now();
 
 const day = toReadableTime({
@@ -158,10 +171,10 @@ console.log(timeago);
 // Today 11:15 PM
 ```
 
------
+---
 
 ### Author
 
 ##### [_Alfred R. Duarte_](https://github.com/trainingmode)
 
------
+---
