@@ -18,6 +18,13 @@ type ClockFormatting =
   /** 12-hour clock that converts times to words, eg. 11:15 PM -> A few moments ago */
   | "timeago";
 
+const dayInMilliseconds = 1000 * 60 * 60 * 24;
+const isWithinYesterday = (date: Date) => Date.now() - date.getTime() <= dayInMilliseconds;
+const isPastMidnight = (date: Date) => !isWithinYesterday(date) || date.getDay() !== new Date().getDay();
+const isWithinWeek = (date: Date) => Date.now() - date.getTime() <= dayInMilliseconds * 7;
+const isWithinMonth = (date: Date) => Date.now() - date.getTime() <= dayInMilliseconds * 31;
+const isWithinYear = (date: Date) => Date.now() - date.getTime() <= dayInMilliseconds * 365;
+
 const readableTimeLabels: any = {
   "en-US": {
     justnow: "Just now",
@@ -181,9 +188,10 @@ const readableTimesLUT = {
     const {
       verbose,
       convertToWords = true,
-      includeAgoSuffix,
+      includeAgoSuffix = true,
       includeToday = false,
       includeJustNow = true,
+      longform = false,
       longTimeAgoThresholdDays,
       abbreviateDays = 0,
       abbreviateMonths = 0, 
@@ -220,30 +228,43 @@ const readableTimesLUT = {
         locale
       });
     }
-    const isPastMidnight = currentDate.getDate() > date.getDate();
-    const isWithinYesterday = currentDate.getDate() - date.getDate() <= 1;
-    const isWithinWeek = currentDate.getDate() - date.getDate() <= 7;
+    const isWithinYesterday = timeDelta <= dayInMilliseconds;
+    const isPastMidnight = !isWithinYesterday || date.getDay() !== currentDate.getDay();
+    const isWithinWeek = timeDelta <= dayInMilliseconds * 7;
 
     if (convertToWords) {
       // Within the Last Day
-      if (includeToday && hoursDelta < 24 && !isPastMidnight)
+      if (includeToday && hoursDelta < 24 && !isPastMidnight) {
         return readableTimeLabels[locale].today;
+      }
       if (
         // Within 24 Hours, Past Midnight
         (hoursDelta < 24 && isPastMidnight) ||
         // Within the Last 2 Days
         (24 <= hoursDelta && hoursDelta < 48 && isWithinYesterday)
-      )
-      return readableTimeLabels[locale].yesterday;
+      ) {
+        return readableTimeLabels[locale].yesterday;
+      }
     }
     // Beyond the Last Day
     if (!isWithinYesterday) {
-      const endIndex = 0 < abbreviateDays ? abbreviateDays : 0;
-      const endChar = 0 < abbreviateDays ? abbreviatePeriod : "";
-      if (isWithinWeek && convertToWords)
-        return readableTimeLabels[locale]
-          .days[date.getDay()]
-          .substring(0, endIndex) + endChar;
+      if (convertToWords) {
+        if (longform) {
+          const endIndex = 0 < abbreviateMonths ? abbreviateMonths : Infinity;
+          const endChar = 0 < abbreviateMonths ? abbreviatePeriod : "";
+          const month = readableTimeLabels[locale]
+            .months[date.getMonth()]
+            .substring(0, endIndex) + endChar;
+          return `${month} ${date.getDate()}, ${date.getFullYear()}`;
+        }
+        if (isWithinWeek) {
+          const endIndex = 0 < abbreviateDays ? abbreviateDays : Infinity;
+          const endChar = 0 < abbreviateDays ? abbreviatePeriod : "";
+          return readableTimeLabels[locale]
+            .days[date.getDay()]
+            .substring(0, endIndex) + endChar;
+        }
+      }
       return date.toLocaleDateString(locale, {
         month: "numeric",
         day: "numeric",
@@ -284,6 +305,7 @@ const readableTimesLUT = {
  * - 'Yesterday' when within the last two days
  * - The day of the week when within the last week
  * - The date when beyond a week
+ *   > NOTE: If `longform` is enabled, the month, day, and year when beyond a week
  *
  * The verbose format displays:
  * - 'A few moments ago' when within a minute
@@ -329,6 +351,7 @@ const readableTimesLUT = {
  *  - includeAgoSuffix: Whether to include the 'ago' suffix for the timeago clock. Defaults to true.
  *  - includeToday: Whether to include 'Today' for times within the past day for the timeago clock. Defaults to false.
  *  - includeJustNow: Whether to include 'Just now' for times within a minute for the timeago clock. Defaults to true.
+ *  - longform: Whether to use the longform date format for the timeago clock. Defaults to false.
  *  - longTimeAgoThresholdDays: The threshold in days to use for the timeago clock. If the time is beyond this threshold, the timeago clock will display 'A long time ago'. Defaults to -1.
  *  - abbreviateDays: The number of characters to abbreviate the days of the week to. Defaults to `0` (no abbreviation).
  *  - abbreviateMonths: The number of characters to abbreviate the months of the year to. Defaults to `0` (no abbreviation).
@@ -349,5 +372,12 @@ const toReadableTime = ({
   return readableTimesLUT[format]({ time, locale, options });
 };
 
-export { toReadableTime };
+export {
+  toReadableTime,
+  isWithinYesterday,
+  isPastMidnight,
+  isWithinWeek,
+  isWithinMonth,
+  isWithinYear
+};
 export type { ClockFormatting };
