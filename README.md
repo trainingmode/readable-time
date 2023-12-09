@@ -49,6 +49,7 @@ The `concise` format displays:
 - `Yesterday` when within the last two days
 - The day of the week when within the last week
 - The date when beyond a week
+    > _NOTE: If `daysOfWeek` is enabled, the day of the week, month and day when beyond a week_
     > _NOTE: If `longform` is enabled, the month, day, and year when beyond a week_
 
 The `verbose` format displays:
@@ -128,6 +129,10 @@ Whether to include `Today` for times within the past day for the timeago clock. 
 #### `includeJustNow`
 
 Whether to include `Just now` for times within the past minute for the timeago clock. Defaults to `true`.
+
+#### `daysOfWeek`
+
+Whether to include the day of the week for the timeago clock. Defaults to `false`.
 
 #### `longform`
 

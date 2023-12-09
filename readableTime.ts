@@ -191,6 +191,7 @@ const readableTimesLUT = {
       includeAgoSuffix = true,
       includeToday = false,
       includeJustNow = true,
+      daysOfWeek = false,
       longform = false,
       longTimeAgoThresholdDays,
       abbreviateDays = 0,
@@ -264,6 +265,17 @@ const readableTimesLUT = {
             .days[date.getDay()]
             .substring(0, endIndex) + endChar;
         }
+        if (daysOfWeek) {
+          const endIndex = 0 < abbreviateDays ? abbreviateDays : Infinity;
+          const endChar = 0 < abbreviateDays ? abbreviatePeriod : "";
+          const day = readableTimeLabels[locale]
+            .days[date.getDay()]
+            .substring(0, endIndex) + endChar;
+          const month = readableTimeLabels[locale]
+            .months[date.getMonth()]
+            .substring(0, endIndex) + endChar;
+          return `${day}, ${month} ${date.getDate()}`;
+        }
       }
       return date.toLocaleDateString(locale, {
         month: "numeric",
@@ -305,6 +317,7 @@ const readableTimesLUT = {
  * - 'Yesterday' when within the last two days
  * - The day of the week when within the last week
  * - The date when beyond a week
+ *   > NOTE: If `daysOfWeek` is enabled, the day of the week, month and day when beyond a week
  *   > NOTE: If `longform` is enabled, the month, day, and year when beyond a week
  *
  * The verbose format displays:
@@ -351,6 +364,7 @@ const readableTimesLUT = {
  *  - includeAgoSuffix: Whether to include the 'ago' suffix for the timeago clock. Defaults to true.
  *  - includeToday: Whether to include 'Today' for times within the past day for the timeago clock. Defaults to false.
  *  - includeJustNow: Whether to include 'Just now' for times within a minute for the timeago clock. Defaults to true.
+ *  - daysOfWeek: Whether to include the day of the week for the timeago clock. Defaults to false.
  *  - longform: Whether to use the longform date format for the timeago clock. Defaults to false.
  *  - longTimeAgoThresholdDays: The threshold in days to use for the timeago clock. If the time is beyond this threshold, the timeago clock will display 'A long time ago'. Defaults to -1.
  *  - abbreviateDays: The number of characters to abbreviate the days of the week to. Defaults to `0` (no abbreviation).
